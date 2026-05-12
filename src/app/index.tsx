@@ -1,5 +1,13 @@
+import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { FlatList, Pressable, StyleSheet, Text, TextInput } from "react-native";
+import {
+  FlatList,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  useColorScheme,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const initialNotes = [
@@ -33,9 +41,34 @@ const initialNotes = [
   },
 ];
 
+const themes = {
+  light: {
+    background: "#fff",
+    card: "#f5f5f5",
+    text: "#1a1a1a",
+    subtext: "#666666",
+    accent: "#6c63ff",
+  },
+  dark: {
+    background: "#121212",
+    card: "#1e1e1e",
+    text: "#ffffff",
+    subtext: "#AAAAAA",
+    accent: "#9d97ff",
+  },
+};
+
 export default function NotesComponent() {
   const [search, setSearch] = useState("");
   const [selectedNote, setSelectedNote] = useState(null);
+
+  const systemColorScheme = useColorScheme();
+  const [manualDark, setManualDark] = useState<boolean | null>(null);
+
+  const isDark =
+    manualDark !== null ? manualDark : systemColorScheme === "dark";
+
+  const theme = isDark ? themes.dark : themes.light;
 
   const filteredNotes = initialNotes.filter(
     (note) =>
@@ -45,39 +78,61 @@ export default function NotesComponent() {
 
   if (selectedNote) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.background }]}
+      >
+        <StatusBar style={manualDark ? "light" : "dark"} />
         <Pressable onPress={() => setSelectedNote(null)}>
-          <Text style={styles.back}>Back</Text>
+          <Text style={[styles.back, { color: theme.text }]}>Back</Text>
         </Pressable>
 
-        <Text style={styles.title}>{selectedNote.title}</Text>
-        <Text style={styles.date}>{selectedNote.date}</Text>
-        <Text style={styles.content}>{selectedNote.content}</Text>
+        <Text style={[styles.title, { color: theme.text }]}>
+          {selectedNote.title}
+        </Text>
+        <Text style={[styles.date, { color: theme.text }]}>
+          {selectedNote.date}
+        </Text>
+        <Text style={[styles.content, { color: theme.text }]}>
+          {selectedNote.content}
+        </Text>
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background }]}
+    >
       <TextInput
         placeholder="Search notes..."
+        placeholderTextColor={theme.text}
         value={search}
         onChangeText={setSearch}
-        style={styles.input}
+        style={[styles.input, { color: theme.accent }]}
       />
 
       <FlatList
         data={filteredNotes}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <Pressable style={styles.card} onPress={() => setSelectedNote(item)}>
-            <Text style={styles.title}>{item.title}</Text>
+          <Pressable
+            style={[styles.card, { backgroundColor: theme.card }]}
+            onPress={() => setSelectedNote(item)}
+          >
+            <Text style={[styles.title, { color: theme.text }]}>
+              {item.title}
+            </Text>
 
-            <Text style={styles.preview} numberOfLines={8}>
+            <Text
+              style={[styles.preview, { color: theme.text }]}
+              numberOfLines={8}
+            >
               {item.content}
             </Text>
 
-            <Text style={styles.date}>{item.date}</Text>
+            <Text style={[styles.date, { color: theme.text }]}>
+              {item.date}
+            </Text>
           </Pressable>
         )}
         ListEmptyComponent={<Text>No notes found</Text>}
@@ -92,16 +147,19 @@ const styles = StyleSheet.create({
   input: {
     padding: 10,
     borderRadius: 8,
-    backgroundColor: "#eee",
     marginBottom: 12,
+    fontSize: 16,
   },
 
   card: {
     padding: 16,
     borderRadius: 10,
-    backgroundColor: "#fff",
+    backgroundColor: themes.card,
     marginBottom: 10,
-    elevation: 2,
+    elevation: 8,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
   },
 
   title: { fontSize: 16, fontWeight: "bold" },
