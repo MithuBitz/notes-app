@@ -1,56 +1,70 @@
-# Welcome to your Expo app 👋
+# 📝 Notes App (React Native + Expo)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A responsive Notes application built using **React Native** and **Expo**, featuring:
 
-## Get started
+- 📋 Notes listing with preview
+- 🔍 Search functionality
+- 🌗 Light/Dark mode toggle
+- 📱 Adaptive layout (portrait & landscape)
+- 🔄 Orientation control (manual)
+- 📄 Detail view for each note
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## 🚀 Features
 
-2. Start the app
+### 📋 Notes List
 
-   ```bash
-   npx expo start
-   ```
+- Displays all notes using `FlatList`
+- Each card includes:
+  - Title
+  - Content preview
+  - Date
 
-In the output, you'll find options to open the app in a
+### 🔍 Search
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Real-time filtering of notes
+- Matches both title and content
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+### 🌗 Theme Support
 
-## Get a fresh project
+- Light and Dark mode
+- System theme detection (`useColorScheme`)
+- Manual override using toggle switch
 
-When you're ready, run:
+### 📱 Responsive Layout
+
+- Portrait → Single column
+- Landscape → Two-column grid
+- Uses `useWindowDimensions`
+
+### 🔄 Orientation Control
+
+- Force Landscape
+- Force Portrait
+- Implemented using `expo-screen-orientation`
+
+### 📄 Note Detail View
+
+- Tap a note to open full content
+- Back button to return to list
+
+---
+
+## 🧠 Core Concepts Used
+
+- React Hooks (`useState`)
+- Conditional Rendering
+- FlatList Optimization
+- Responsive Design
+- Theme Management
+- Keyboard Handling (`KeyboardAvoidingView`)
+
+---
+
+## 📦 Dependencies
 
 ```bash
-npm run reset-project
+expo install expo-screen-orientation
+expo install react-native-safe-area-context
 ```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-### Other setup steps
-
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.

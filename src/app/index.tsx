@@ -140,6 +140,11 @@ export default function NotesComponent() {
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
+        <Switch
+          value={isDark}
+          onValueChange={(value) => setManualDark(value)}
+          thumbColor={theme.accent}
+        />
         <View style={styles.header}>
           <View
             style={[
@@ -157,12 +162,6 @@ export default function NotesComponent() {
               style={[styles.searchInput, { color: theme.text }]}
             />
           </View>
-
-          <Switch
-            value={isDark}
-            onValueChange={(value) => setManualDark(value)}
-            thumbColor={theme.accent}
-          />
         </View>
 
         <FlatList
