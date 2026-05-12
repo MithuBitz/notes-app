@@ -1,3 +1,4 @@
+import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
@@ -8,6 +9,7 @@ import {
   Text,
   TextInput,
   useColorScheme,
+  useWindowDimensions,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -72,6 +74,24 @@ export default function NotesComponent() {
 
   const theme = isDark ? themes.dark : themes.light;
 
+  const { height, width } = useWindowDimensions();
+  // console.log({ height, width });
+
+  const isTablet = width >= 768;
+  const isLandscape = width > height;
+
+  const lockLanscape = async () => {
+    await ScreenOrientation.lockAsync(
+      ScreenOrientation.OrientationLock.LANDSCAPE,
+    );
+  };
+
+  const lockPortrait = async () => {
+    await ScreenOrientation.lockAsync(
+      ScreenOrientation.OrientationLock.PORTRAIT,
+    );
+  };
+
   const filteredNotes = initialNotes.filter(
     (note) =>
       note.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -133,18 +153,33 @@ export default function NotesComponent() {
       <FlatList
         data={filteredNotes}
         keyExtractor={(item) => item.id}
+        numColumns={isLandscape ? 2 : 1}
+        key={isLandscape ? "landscape" : "portrait"} // 🔥 IMPORTANT (forces re-layout)
+        columnWrapperStyle={
+          isLandscape ? { justifyContent: "space-between", gap: 10 } : undefined
+        }
         renderItem={({ item }) => (
           <Pressable
-            style={[styles.card, { backgroundColor: theme.card }]}
+            style={[
+              styles.card,
+              { backgroundColor: theme.card },
+              isLandscape && styles.cardLandscape,
+            ]}
             onPress={() => setSelectedNote(item)}
           >
-            <Text style={[styles.title, { color: theme.text }]}>
+            <Text
+              style={[
+                styles.title,
+                { color: theme.text },
+                isLandscape && styles.titleLandscape,
+              ]}
+            >
               {item.title}
             </Text>
 
             <Text
-              style={[styles.preview, { color: theme.text }]}
-              numberOfLines={8}
+              style={[styles.preview, { color: theme.subtext }, ,]}
+              numberOfLines={isLandscape ? 4 : 8}
             >
               {item.content}
             </Text>
@@ -156,6 +191,32 @@ export default function NotesComponent() {
         )}
         ListEmptyComponent={<Text>No notes found</Text>}
       />
+      <View style={{ flexDirection: "row", marginTop: 24, gap: 12 }}>
+        <Pressable
+          onPress={lockLanscape}
+          style={{
+            flex: 1,
+            backgroundColor: "#6C63FF",
+            padding: 12,
+            borderRadius: 8,
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ color: "white" }}>Force Landscape 📲</Text>
+        </Pressable>
+        <Pressable
+          onPress={lockPortrait}
+          style={{
+            flex: 1,
+            backgroundColor: "#ff6584",
+            padding: 12,
+            borderRadius: 8,
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ color: "white" }}>Force Portrait 📱</Text>
+        </Pressable>
+      </View>
     </SafeAreaView>
   );
 }
@@ -219,5 +280,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 18,
     gap: 12,
+  },
+
+  cardLandscape: {
+    flex: 1,
+    maxWidth: "48%",
+  },
+
+  titleLandscape: {
+    fontSize: 18,
   },
 });
