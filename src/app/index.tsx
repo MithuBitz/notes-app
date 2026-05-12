@@ -3,6 +3,8 @@ import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
   FlatList,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
   StyleSheet,
   Switch,
@@ -134,89 +136,105 @@ export default function NotesComponent() {
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.background }]}
     >
-      <View style={styles.header}>
-        <TextInput
-          placeholder="Search notes..."
-          placeholderTextColor={theme.text}
-          value={search}
-          onChangeText={setSearch}
-          style={[styles.input, { color: theme.accent }]}
-        />
-
-        <Switch
-          value={isDark}
-          onValueChange={(value) => setManualDark(value)}
-          thumbColor={theme.accent}
-        />
-      </View>
-
-      <FlatList
-        data={filteredNotes}
-        keyExtractor={(item) => item.id}
-        numColumns={isLandscape ? 2 : 1}
-        key={isLandscape ? "landscape" : "portrait"} // 🔥 IMPORTANT (forces re-layout)
-        columnWrapperStyle={
-          isLandscape ? { justifyContent: "space-between", gap: 10 } : undefined
-        }
-        renderItem={({ item }) => (
-          <Pressable
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <View style={styles.header}>
+          <View
             style={[
-              styles.card,
-              { backgroundColor: theme.card },
-              isLandscape && styles.cardLandscape,
+              styles.searchContainer,
+              { backgroundColor: theme.card, borderColor: theme.subtext },
             ]}
-            onPress={() => setSelectedNote(item)}
           >
-            <Text
+            <Text style={{ marginRight: 8, fontSize: 16 }}>🔍</Text>
+
+            <TextInput
+              placeholder="Search notes..."
+              placeholderTextColor={theme.subtext}
+              value={search}
+              onChangeText={setSearch}
+              style={[styles.searchInput, { color: theme.text }]}
+            />
+          </View>
+
+          <Switch
+            value={isDark}
+            onValueChange={(value) => setManualDark(value)}
+            thumbColor={theme.accent}
+          />
+        </View>
+
+        <FlatList
+          data={filteredNotes}
+          keyExtractor={(item) => item.id}
+          numColumns={isLandscape ? 2 : 1}
+          key={isLandscape ? "landscape" : "portrait"} // 🔥 IMPORTANT (forces re-layout)
+          columnWrapperStyle={
+            isLandscape
+              ? { justifyContent: "space-between", gap: 10 }
+              : undefined
+          }
+          renderItem={({ item }) => (
+            <Pressable
               style={[
-                styles.title,
-                { color: theme.text },
-                isLandscape && styles.titleLandscape,
+                styles.card,
+                { backgroundColor: theme.card },
+                isLandscape && styles.cardLandscape,
               ]}
+              onPress={() => setSelectedNote(item)}
             >
-              {item.title}
-            </Text>
+              <Text
+                style={[
+                  styles.title,
+                  { color: theme.text },
+                  isLandscape && styles.titleLandscape,
+                ]}
+              >
+                {item.title}
+              </Text>
 
-            <Text
-              style={[styles.preview, { color: theme.subtext }, ,]}
-              numberOfLines={isLandscape ? 4 : 8}
-            >
-              {item.content}
-            </Text>
+              <Text
+                style={[styles.preview, { color: theme.subtext }, ,]}
+                numberOfLines={isLandscape ? 4 : 8}
+              >
+                {item.content}
+              </Text>
 
-            <Text style={[styles.date, { color: theme.text }]}>
-              {item.date}
-            </Text>
+              <Text style={[styles.date, { color: theme.text }]}>
+                {item.date}
+              </Text>
+            </Pressable>
+          )}
+          ListEmptyComponent={<Text>No notes found</Text>}
+        />
+        <View style={{ flexDirection: "row", marginTop: 24, gap: 12 }}>
+          <Pressable
+            onPress={lockLanscape}
+            style={{
+              flex: 1,
+              backgroundColor: "#6C63FF",
+              padding: 12,
+              borderRadius: 8,
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ color: "white" }}>Force Landscape 📲</Text>
           </Pressable>
-        )}
-        ListEmptyComponent={<Text>No notes found</Text>}
-      />
-      <View style={{ flexDirection: "row", marginTop: 24, gap: 12 }}>
-        <Pressable
-          onPress={lockLanscape}
-          style={{
-            flex: 1,
-            backgroundColor: "#6C63FF",
-            padding: 12,
-            borderRadius: 8,
-            alignItems: "center",
-          }}
-        >
-          <Text style={{ color: "white" }}>Force Landscape 📲</Text>
-        </Pressable>
-        <Pressable
-          onPress={lockPortrait}
-          style={{
-            flex: 1,
-            backgroundColor: "#ff6584",
-            padding: 12,
-            borderRadius: 8,
-            alignItems: "center",
-          }}
-        >
-          <Text style={{ color: "white" }}>Force Portrait 📱</Text>
-        </Pressable>
-      </View>
+          <Pressable
+            onPress={lockPortrait}
+            style={{
+              flex: 1,
+              backgroundColor: "#ff6584",
+              padding: 12,
+              borderRadius: 8,
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ color: "white" }}>Force Portrait 📱</Text>
+          </Pressable>
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -229,6 +247,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 12,
     fontSize: 16,
+    borderWidth: 1,
   },
 
   card: {
@@ -289,5 +308,18 @@ const styles = StyleSheet.create({
 
   titleLandscape: {
     fontSize: 18,
+  },
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderWidth: 1,
+    borderRadius: 25, // 🔥 pill shape
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
   },
 });
