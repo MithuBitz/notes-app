@@ -4,9 +4,11 @@ import {
   FlatList,
   Pressable,
   StyleSheet,
+  Switch,
   Text,
   TextInput,
   useColorScheme,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -82,9 +84,18 @@ export default function NotesComponent() {
         style={[styles.container, { backgroundColor: theme.background }]}
       >
         <StatusBar style={manualDark ? "light" : "dark"} />
-        <Pressable onPress={() => setSelectedNote(null)}>
-          <Text style={[styles.back, { color: theme.text }]}>Back</Text>
-        </Pressable>
+
+        <View style={styles.header}>
+          <Pressable onPress={() => setSelectedNote(null)}>
+            <Text style={[styles.back, { color: theme.text }]}>Back</Text>
+          </Pressable>
+
+          <Switch
+            value={isDark}
+            onValueChange={(value) => setManualDark(value)}
+            thumbColor={theme.accent}
+          />
+        </View>
 
         <Text style={[styles.title, { color: theme.text }]}>
           {selectedNote.title}
@@ -103,13 +114,21 @@ export default function NotesComponent() {
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.background }]}
     >
-      <TextInput
-        placeholder="Search notes..."
-        placeholderTextColor={theme.text}
-        value={search}
-        onChangeText={setSearch}
-        style={[styles.input, { color: theme.accent }]}
-      />
+      <View style={styles.header}>
+        <TextInput
+          placeholder="Search notes..."
+          placeholderTextColor={theme.text}
+          value={search}
+          onChangeText={setSearch}
+          style={[styles.input, { color: theme.accent }]}
+        />
+
+        <Switch
+          value={isDark}
+          onValueChange={(value) => setManualDark(value)}
+          thumbColor={theme.accent}
+        />
+      </View>
 
       <FlatList
         data={filteredNotes}
@@ -154,7 +173,6 @@ const styles = StyleSheet.create({
   card: {
     padding: 16,
     borderRadius: 10,
-    backgroundColor: themes.card,
     marginBottom: 10,
     elevation: 8,
     shadowColor: "#000",
@@ -187,5 +205,19 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     lineHeight: 22,
+  },
+
+  toggleRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 12,
+    alignItems: "flex-end",
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 18,
+    gap: 12,
   },
 });
