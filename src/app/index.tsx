@@ -68,6 +68,11 @@ export default function NotesComponent() {
   const [search, setSearch] = useState("");
   const [selectedNote, setSelectedNote] = useState(null);
 
+  const [notes, setNotes] = useState(initialNotes);
+  const [isCreating, setIsCreating] = useState(false);
+  const [newTitle, setNewTitle] = useState("");
+  const [newContent, setNewContent] = useState("");
+
   const systemColorScheme = useColorScheme();
   const [manualDark, setManualDark] = useState<boolean | null>(null);
 
@@ -94,7 +99,7 @@ export default function NotesComponent() {
     );
   };
 
-  const filteredNotes = initialNotes.filter(
+  const filteredNotes = notes.filter(
     (note) =>
       note.title.toLowerCase().includes(search.toLowerCase()) ||
       note.content.toLowerCase().includes(search.toLowerCase()),
@@ -140,11 +145,6 @@ export default function NotesComponent() {
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <Switch
-          value={isDark}
-          onValueChange={(value) => setManualDark(value)}
-          thumbColor={theme.accent}
-        />
         <View style={styles.header}>
           <View
             style={[
@@ -162,7 +162,90 @@ export default function NotesComponent() {
               style={[styles.searchInput, { color: theme.text }]}
             />
           </View>
+
+          <Switch
+            value={isDark}
+            onValueChange={(value) => setManualDark(value)}
+            thumbColor={theme.accent}
+          />
         </View>
+
+        {!isCreating && (
+          <Pressable
+            style={[styles.addNoteBtn, { backgroundColor: theme.accent }]}
+            onPress={() => setIsCreating(true)}
+          >
+            <Text style={styles.addNoteBtnText}>＋ Add Note</Text>
+          </Pressable>
+        )}
+
+        {isCreating && (
+          <View style={[styles.createBox, { backgroundColor: theme.card }]}>
+            <TextInput
+              placeholder="Title"
+              placeholderTextColor={theme.subtext}
+              value={newTitle}
+              onChangeText={setNewTitle}
+              style={[
+                styles.input,
+                { color: theme.text, borderColor: theme.subtext },
+              ]}
+            />
+ 
+            <TextInput
+              placeholder="Content"
+              placeholderTextColor={theme.subtext}
+              value={newContent}
+              onChangeText={setNewContent}
+              multiline
+              style={[
+                styles.input,
+                {
+                  color: theme.text,
+                  borderColor: theme.subtext,
+                  height: 100,
+                  textAlignVertical: "top",
+                },
+              ]}
+            />
+ 
+            <View style={{ flexDirection: "row", gap: 10 }}>
+              <Pressable
+                style={[styles.actionBtn, { backgroundColor: "#6C63FF" }]}
+                onPress={() => {
+                  if (!newTitle.trim()) return;
+ 
+                  const newNote = {
+                    id: Date.now().toString(),
+                    title: newTitle,
+                    content: newContent,
+                    date: new Date().toLocaleDateString(),
+                  };
+ 
+                  setNotes([newNote, ...notes]);
+                  setNewTitle("");
+                  setNewContent("");
+                  setIsCreating(false);
+                }}
+              >
+                <Text style={{ color: "white", fontWeight: "600" }}>Save</Text>
+              </Pressable>
+ 
+              <Pressable
+                style={[styles.actionBtn, { backgroundColor: "#999" }]}
+                onPress={() => {
+                  setIsCreating(false);
+                  setNewTitle("");
+                  setNewContent("");
+                }}
+              >
+                <Text style={{ color: "white", fontWeight: "600" }}>
+                  Cancel
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        )}
 
         <FlatList
           data={filteredNotes}
@@ -320,5 +403,34 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 16,
+  },
+
+  addNoteBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    borderRadius: 10,
+    marginBottom: 14,
+  },
+
+  addNoteBtnText: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "700",
+    letterSpacing: 0.4,
+  },
+
+  createBox: {
+    padding: 16,
+    borderRadius: 10,
+    marginBottom: 12,
+  },
+
+  actionBtn: {
+    flex: 1,
+    padding: 12,
+    borderRadius: 8,
+    alignItems: "center",
   },
 });
