@@ -149,7 +149,11 @@ export default function NotesComponent() {
           <View
             style={[
               styles.searchContainer,
-              { backgroundColor: theme.card, borderColor: theme.subtext },
+              {
+                backgroundColor: theme.card,
+                borderColor: theme.subtext,
+                flex: 1,
+              },
             ]}
           >
             <Text style={{ marginRight: 8, fontSize: 16 }}>🔍</Text>
@@ -191,7 +195,7 @@ export default function NotesComponent() {
                 { color: theme.text, borderColor: theme.subtext },
               ]}
             />
- 
+
             <TextInput
               placeholder="Content"
               placeholderTextColor={theme.subtext}
@@ -208,20 +212,20 @@ export default function NotesComponent() {
                 },
               ]}
             />
- 
+
             <View style={{ flexDirection: "row", gap: 10 }}>
               <Pressable
                 style={[styles.actionBtn, { backgroundColor: "#6C63FF" }]}
                 onPress={() => {
                   if (!newTitle.trim()) return;
- 
+
                   const newNote = {
                     id: Date.now().toString(),
                     title: newTitle,
                     content: newContent,
                     date: new Date().toLocaleDateString(),
                   };
- 
+
                   setNotes([newNote, ...notes]);
                   setNewTitle("");
                   setNewContent("");
@@ -230,7 +234,7 @@ export default function NotesComponent() {
               >
                 <Text style={{ color: "white", fontWeight: "600" }}>Save</Text>
               </Pressable>
- 
+
               <Pressable
                 style={[styles.actionBtn, { backgroundColor: "#999" }]}
                 onPress={() => {
@@ -398,6 +402,7 @@ const styles = StyleSheet.create({
     borderRadius: 25, // 🔥 pill shape
     paddingHorizontal: 12,
     paddingVertical: 8,
+    marginBottom: 10,
   },
 
   searchInput: {
